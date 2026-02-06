@@ -68,11 +68,25 @@ Also document what is already well implemented. Examples:
 
 ---
 
-## Phase 2 – Create Epics
+## Phase 2 – Create or Update Epics
 
-Create one epic per severity level with concrete tickets in `docs/epics/`:
+Create or update one epic per severity level with concrete tickets in `docs/epics/`:
 
-### 2.1 Epic Structure
+### 2.1 Existing Epics – Read First
+
+Before creating or modifying epics, check if `docs/epics/epic-security-*.md` files already exist. If they do:
+
+1. **Read all existing epic files** to understand previously documented findings
+2. **Compare** each existing ticket against the current analysis results
+3. **Update** each ticket according to these rules:
+   - **Fixed issue:** Mark the ticket as `✓ RESOLVED`. Add a `**Resolution:**` section describing what was done. Check off the acceptance criteria. **NEVER delete the ticket.**
+   - **Still open (unchanged):** Keep the ticket as-is
+   - **Worsened or changed:** Re-evaluate the ticket. Update the description, severity, affected code, and recommended fix. Add a `**Re-evaluation ([Date]):**` note explaining what changed. If severity changed, move the ticket to the appropriate epic file (and leave a cross-reference in the old location)
+   - **New finding:** Add as a new ticket with the next available ID
+4. **NEVER delete any ticket or finding** – resolved issues serve as audit trail
+5. Set the epic **Status** to `closed` when all tickets within it are resolved
+
+### 2.2 Epic Structure
 
 For each severity level (where findings exist) create a file:
 
@@ -81,12 +95,12 @@ For each severity level (where findings exist) create a file:
 - `docs/epics/epic-security-medium.md` – Medium findings
 - `docs/epics/epic-security-low.md` – Low findings
 
-### 2.2 Epic Format
+### 2.3 Epic Format
 
 ```markdown
 # Epic: Security Hardening – [Severity] Findings
 
-**Status:** open
+**Status:** open | closed
 **Priority:** [CRITICAL/HIGH/MEDIUM/LOW]
 **Source:** Security Audit, [Date]
 
@@ -115,19 +129,30 @@ For each severity level (where findings exist) create a file:
 
 ---
 
+### [Epic-Nr].[Ticket-Nr] – [Title] ✓ RESOLVED
+
+**File:** `[Path]`
+**Finding:** [ID] – [Short description]
+
+**Resolution:** [What was done to fix the issue]
+
+---
+
 ## Acceptance Criteria
 
 - [ ] [Testable criterion 1]
-- [ ] [Testable criterion 2]
+- [x] [Resolved criterion]
 ```
 
-### 2.3 Rules for Epics
+### 2.4 Rules for Epics
 
 - Every ticket must reference **file and line**
 - Every ticket must contain **concrete fix code** (not just "should be fixed")
 - Acceptance criteria must be **testable** (e.g. "Request with X returns Y")
 - Cross-reference tickets when fixes overlap
 - Order within an epic: by effort/impact descending
+- **NEVER delete tickets or findings** – they are part of the audit trail
+- Resolved tickets stay in the epic with their resolution documented
 
 ---
 
