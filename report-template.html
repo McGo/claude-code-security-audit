@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security Audit Report</title>
+<style>
+  /* ========================================
+     Base Styles
+     ======================================== */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #1a1a2e;
+    background: #fff;
+  }
+
+  /* ========================================
+     Print / PDF Styles
+     ======================================== */
+  @page {
+    size: A4;
+    margin: 20mm 18mm 25mm 18mm;
+  }
+
+  @media print {
+    body { font-size: 10pt; }
+    .page-break { page-break-before: always; }
+    .no-break { page-break-inside: avoid; }
+    .title-page { page-break-after: always; }
+  }
+
+  /* ========================================
+     Title Page
+     ======================================== */
+  .title-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 90vh;
+    text-align: center;
+    padding: 60px 40px;
+  }
+
+  .title-page h1 {
+    font-size: 32pt;
+    font-weight: 700;
+    color: #16213e;
+    margin-bottom: 8px;
+    letter-spacing: -0.5px;
+  }
+
+  .title-page .subtitle {
+    font-size: 14pt;
+    color: #546e7a;
+    margin-bottom: 40px;
+  }
+
+  .title-page .meta {
+    font-size: 11pt;
+    color: #78909c;
+    margin-top: 20px;
+    line-height: 2;
+  }
+
+  .title-page .meta strong {
+    color: #37474f;
+  }
+
+  /* ========================================
+     Score Ring
+     ======================================== */
+  .score-container {
+    display: flex;
+    justify-content: center;
+    margin: 30px 0;
+  }
+
+  .score-ring {
+    position: relative;
+    width: 180px;
+    height: 180px;
+  }
+
+  .score-ring svg {
+    width: 180px;
+    height: 180px;
+    transform: rotate(-90deg);
+  }
+
+  .score-ring .bg {
+    fill: none;
+    stroke: #e8eaf0;
+    stroke-width: 12;
+  }
+
+  .score-ring .progress {
+    fill: none;
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+  }
+
+  .score-ring .score-label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-ring .score-value {
+    font-size: 36pt;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .score-ring .score-grade {
+    font-size: 14pt;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .score-ring .score-max {
+    font-size: 9pt;
+    color: #90a4ae;
+  }
+
+  /* Score colors */
+  .grade-a .progress { stroke: #2e7d32; }
+  .grade-a .score-value, .grade-a .score-grade { color: #2e7d32; }
+  .grade-b-plus .progress { stroke: #558b2f; }
+  .grade-b-plus .score-value, .grade-b-plus .score-grade { color: #558b2f; }
+  .grade-b .progress { stroke: #f9a825; }
+  .grade-b .score-value, .grade-b .score-grade { color: #f9a825; }
+  .grade-c .progress { stroke: #ef6c00; }
+  .grade-c .score-value, .grade-c .score-grade { color: #ef6c00; }
+  .grade-d .progress { stroke: #c62828; }
+  .grade-d .score-value, .grade-d .score-grade { color: #c62828; }
+
+  /* ========================================
+     Section Headings
+     ======================================== */
+  h2 {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #16213e;
+    border-bottom: 3px solid #1a73e8;
+    padding-bottom: 8px;
+    margin: 30px 0 16px 0;
+  }
+
+  h3 {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin: 20px 0 10px 0;
+  }
+
+  h4 {
+    font-size: 11pt;
+    font-weight: 600;
+    color: #37474f;
+    margin: 14px 0 6px 0;
+  }
+
+  /* ========================================
+     Severity Badges
+     ======================================== */
+  .badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #fff;
+  }
+
+  .badge-critical { background: #c62828; }
+  .badge-high { background: #e65100; }
+  .badge-medium { background: #f9a825; color: #1a1a2e; }
+  .badge-low { background: #2e7d32; }
+  .badge-positive { background: #1565c0; }
+
+  /* ========================================
+     Summary Statistics
+     ======================================== */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+
+  .stat-card {
+    text-align: center;
+    padding: 16px 8px;
+    border-radius: 8px;
+    border: 1px solid #e8eaf0;
+  }
+
+  .stat-card .stat-count {
+    font-size: 28pt;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .stat-card .stat-label {
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+
+  .stat-critical { border-color: #c62828; }
+  .stat-critical .stat-count { color: #c62828; }
+  .stat-high { border-color: #e65100; }
+  .stat-high .stat-count { color: #e65100; }
+  .stat-medium { border-color: #f9a825; }
+  .stat-medium .stat-count { color: #f9a825; }
+  .stat-low { border-color: #2e7d32; }
+  .stat-low .stat-count { color: #2e7d32; }
+  .stat-positive { border-color: #1565c0; }
+  .stat-positive .stat-count { color: #1565c0; }
+
+  /* ========================================
+     Tables
+     ======================================== */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 10pt;
+  }
+
+  thead th {
+    background: #16213e;
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 9pt;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e8eaf0;
+    vertical-align: top;
+  }
+
+  tbody tr:nth-child(even) {
+    background: #f8f9fc;
+  }
+
+  /* ========================================
+     Finding Detail Cards
+     ======================================== */
+  .finding-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin: 16px 0;
+    overflow: hidden;
+  }
+
+  .finding-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: #f5f6fa;
+    border-bottom: 1px solid #e0e0e0;
+  }
+
+  .finding-header .finding-id {
+    font-weight: 700;
+    font-size: 11pt;
+  }
+
+  .finding-body {
+    padding: 16px;
+  }
+
+  .finding-body p {
+    margin-bottom: 10px;
+  }
+
+  .finding-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 9pt;
+    color: #546e7a;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* ========================================
+     Code Blocks
+     ======================================== */
+  pre {
+    background: #1e1e2e;
+    color: #cdd6f4;
+    padding: 14px 16px;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 9pt;
+    line-height: 1.5;
+    overflow-x: auto;
+    margin: 8px 0 12px 0;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    font-size: 9pt;
+    background: #f0f1f5;
+    padding: 2px 5px;
+    border-radius: 3px;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  /* ========================================
+     Risk Matrix
+     ======================================== */
+  .risk-matrix {
+    margin: 20px 0;
+  }
+
+  .risk-matrix table {
+    border: 2px solid #16213e;
+  }
+
+  .risk-matrix th,
+  .risk-matrix td {
+    text-align: center;
+    padding: 12px;
+    font-size: 10pt;
+    border: 1px solid #cfd8dc;
+  }
+
+  .risk-matrix .axis-label {
+    font-weight: 700;
+    background: #eceff1;
+    color: #37474f;
+  }
+
+  .risk-cell-critical { background: #ffcdd2; color: #b71c1c; font-weight: 700; }
+  .risk-cell-high { background: #ffe0b2; color: #e65100; font-weight: 700; }
+  .risk-cell-medium { background: #fff9c4; color: #f57f17; font-weight: 600; }
+  .risk-cell-low { background: #c8e6c9; color: #2e7d32; }
+
+  /* ========================================
+     Positive Findings
+     ======================================== */
+  .positive-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .positive-list li {
+    padding: 10px 14px;
+    margin: 6px 0;
+    background: #e3f2fd;
+    border-left: 4px solid #1565c0;
+    border-radius: 0 6px 6px 0;
+    font-size: 10pt;
+  }
+
+  /* ========================================
+     References / Sources
+     ======================================== */
+  .reference-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .reference-list li {
+    padding: 6px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 9.5pt;
+  }
+
+  .reference-list a {
+    color: #1a73e8;
+    text-decoration: none;
+  }
+
+  .reference-list .ref-category {
+    font-weight: 600;
+    color: #37474f;
+  }
+
+  /* ========================================
+     Footer
+     ======================================== */
+  .report-footer {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 2px solid #e8eaf0;
+    font-size: 9pt;
+    color: #90a4ae;
+    text-align: center;
+  }
+
+  /* ========================================
+     Executive Summary
+     ======================================== */
+  .executive-summary {
+    background: #f8f9fc;
+    border: 1px solid #e0e4ef;
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-size: 11pt;
+    line-height: 1.7;
+  }
+
+  /* ========================================
+     Utility
+     ======================================== */
+  .text-muted { color: #90a4ae; }
+  .text-small { font-size: 9pt; }
+  .mt-1 { margin-top: 8px; }
+  .mt-2 { margin-top: 16px; }
+  .mb-1 { margin-bottom: 8px; }
+  .mb-2 { margin-bottom: 16px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================
+     TITLE PAGE
+     ============================================ -->
+<div class="title-page">
+  <h1>Security Audit Report</h1>
+  <div class="subtitle"><!-- PROJECT_NAME --></div>
+
+  <!-- SCORE_RING -->
+  <!--
+    Ersetze diesen Kommentar mit dem Score-Ring. Beispiel:
+
+    <div class="score-container">
+      <div class="score-ring grade-b">
+        <svg viewBox="0 0 180 180">
+          <circle class="bg" cx="90" cy="90" r="78"/>
+          <circle class="progress" cx="90" cy="90" r="78"
+            stroke-dasharray="490.1"
+            stroke-dashoffset="BERECHNE: 490.1 * (1 - score/100)"/>
+        </svg>
+        <div class="score-label">
+          <div class="score-value">SCORE</div>
+          <div class="score-grade">GRADE</div>
+          <div class="score-max">von 100</div>
+        </div>
+      </div>
+    </div>
+
+    Formel fuer stroke-dashoffset: 490.1 * (1 - score/100)
+    Umfang (2 * PI * 78) = 490.1
+
+    Grade-Klassen: grade-a, grade-b-plus, grade-b, grade-c, grade-d
+  -->
+
+  <div class="meta">
+    <strong>Datum:</strong> <!-- AUDIT_DATE --><br>
+    <strong>Auditor:</strong> Claude Code (Automated Security Analysis)<br>
+    <strong>Methode:</strong> Statische Codeanalyse, Konfigurationspruefung, Dependency-Analyse<br>
+    <strong>Scope:</strong> <!-- AUDIT_SCOPE -->
+  </div>
+</div>
+
+<!-- ============================================
+     EXECUTIVE SUMMARY
+     ============================================ -->
+<div class="page-break"></div>
+
+<h2>Executive Summary</h2>
+
+<div class="executive-summary">
+  <!-- EXECUTIVE_SUMMARY -->
+  <!--
+    Ersetze mit 3-5 Saetzen:
+    - Gesamteinschaetzung der Sicherheitslage
+    - Wichtigste Findings (kritisch/hoch)
+    - Empfehlung fuer naechste Schritte
+  -->
+</div>
+
+<!-- ============================================
+     STATISTICS
+     ============================================ -->
+<h2>Ergebnisuebersicht</h2>
+
+<!-- STATS_GRID -->
+<!--
+  Ersetze mit:
+
+  <div class="stats-grid">
+    <div class="stat-card stat-critical">
+      <div class="stat-count">N</div>
+      <div class="stat-label">Kritisch</div>
+    </div>
+    <div class="stat-card stat-high">
+      <div class="stat-count">N</div>
+      <div class="stat-label">Hoch</div>
+    </div>
+    <div class="stat-card stat-medium">
+      <div class="stat-count">N</div>
+      <div class="stat-label">Mittel</div>
+    </div>
+    <div class="stat-card stat-low">
+      <div class="stat-count">N</div>
+      <div class="stat-label">Niedrig</div>
+    </div>
+    <div class="stat-card stat-positive">
+      <div class="stat-count">N</div>
+      <div class="stat-label">Positiv</div>
+    </div>
+  </div>
+-->
+
+<!-- ============================================
+     FINDINGS TABLE
+     ============================================ -->
+<h2>Findings-Uebersicht</h2>
+
+<!-- FINDINGS_TABLE -->
+<!--
+  Ersetze mit:
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Schweregrad</th>
+        <th>Finding</th>
+        <th>Datei</th>
+        <th>OWASP</th>
+        <th>CWE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>K1</td>
+        <td><span class="badge badge-critical">Kritisch</span></td>
+        <td>Finding-Titel</td>
+        <td><code>src/file.ts</code></td>
+        <td>A01:2021</td>
+        <td>CWE-XXX</td>
+      </tr>
+      ...
+    </tbody>
+  </table>
+-->
+
+<!-- ============================================
+     DETAILED FINDINGS
+     ============================================ -->
+<div class="page-break"></div>
+
+<h2>Detaillierte Findings</h2>
+
+<!-- DETAILED_FINDINGS -->
+<!--
+  Pro Finding eine Karte erstellen:
+
+  <div class="finding-card no-break">
+    <div class="finding-header">
+      <span class="finding-id">K1 – Finding-Titel</span>
+      <span class="badge badge-critical">Kritisch</span>
+    </div>
+    <div class="finding-body">
+      <p><strong>Beschreibung:</strong> ...</p>
+
+      <h4>Betroffener Code</h4>
+      <p class="text-small text-muted">Datei: <code>src/file.ts</code>, Zeilen XX-YY</p>
+      <pre><code>// aktueller Code</code></pre>
+
+      <h4>Empfohlene Behebung</h4>
+      <pre><code>// empfohlener Code</code></pre>
+
+      <div class="finding-meta">
+        <span>OWASP: A01:2021 Broken Access Control</span>
+        <span>CWE: CWE-918 Server-Side Request Forgery</span>
+      </div>
+    </div>
+  </div>
+-->
+
+<!-- ============================================
+     POSITIVE FINDINGS
+     ============================================ -->
+<div class="page-break"></div>
+
+<h2>Positiv-Findings</h2>
+
+<!-- POSITIVE_FINDINGS -->
+<!--
+  Ersetze mit:
+
+  <ul class="positive-list">
+    <li><strong>Titel:</strong> Beschreibung der positiven Massnahme</li>
+    ...
+  </ul>
+-->
+
+<!-- ============================================
+     RISK MATRIX
+     ============================================ -->
+<h2>Risikomatrix</h2>
+
+<!-- RISK_MATRIX -->
+<!--
+  Ersetze mit befuellter Matrix. Setze Finding-IDs in die passenden Zellen:
+
+  <div class="risk-matrix">
+    <table>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Niedrig (Impact)</th>
+          <th>Mittel (Impact)</th>
+          <th>Hoch (Impact)</th>
+          <th>Kritisch (Impact)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="axis-label">Hoch (Wahrsch.)</td>
+          <td class="risk-cell-medium">...</td>
+          <td class="risk-cell-high">...</td>
+          <td class="risk-cell-critical">...</td>
+          <td class="risk-cell-critical">...</td>
+        </tr>
+        <tr>
+          <td class="axis-label">Mittel (Wahrsch.)</td>
+          <td class="risk-cell-low">...</td>
+          <td class="risk-cell-medium">...</td>
+          <td class="risk-cell-high">...</td>
+          <td class="risk-cell-critical">...</td>
+        </tr>
+        <tr>
+          <td class="axis-label">Niedrig (Wahrsch.)</td>
+          <td class="risk-cell-low">...</td>
+          <td class="risk-cell-low">...</td>
+          <td class="risk-cell-medium">...</td>
+          <td class="risk-cell-high">...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+-->
+
+<!-- ============================================
+     REFERENCES
+     ============================================ -->
+<div class="page-break"></div>
+
+<h2>Quellen und Referenzen</h2>
+
+<!-- REFERENCES -->
+<!--
+  Ersetze mit den relevanten Referenzen aus references.md:
+
+  <ul class="reference-list">
+    <li>
+      <span class="ref-category">OWASP Top 10:</span>
+      <a href="https://owasp.org/Top10/">OWASP Top 10:2021</a>
+    </li>
+    ...
+  </ul>
+-->
+
+<!-- ============================================
+     FOOTER
+     ============================================ -->
+<div class="report-footer">
+  <p>Dieser Report wurde automatisiert erstellt mit Claude Code Security Audit Skill.</p>
+  <p>Die Analyse basiert auf statischer Codeanalyse und deckt moeglicherweise nicht alle Schwachstellen ab.</p>
+  <p>Eine manuelle Ueberpruefung durch einen Security-Experten wird empfohlen.</p>
+</div>
+
+</body>
+</html>
