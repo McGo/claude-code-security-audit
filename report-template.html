@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="<!-- LANG: set to language code, e.g. en, de, fr. Default: en -->">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -450,7 +450,7 @@
 
   <!-- SCORE_RING -->
   <!--
-    Ersetze diesen Kommentar mit dem Score-Ring. Beispiel:
+    Replace this comment with the score ring. Example:
 
     <div class="score-container">
       <div class="score-ring grade-b">
@@ -458,26 +458,26 @@
           <circle class="bg" cx="90" cy="90" r="78"/>
           <circle class="progress" cx="90" cy="90" r="78"
             stroke-dasharray="490.1"
-            stroke-dashoffset="BERECHNE: 490.1 * (1 - score/100)"/>
+            stroke-dashoffset="CALCULATE: 490.1 * (1 - score/100)"/>
         </svg>
         <div class="score-label">
           <div class="score-value">SCORE</div>
           <div class="score-grade">GRADE</div>
-          <div class="score-max">von 100</div>
+          <div class="score-max">of 100</div>
         </div>
       </div>
     </div>
 
-    Formel fuer stroke-dashoffset: 490.1 * (1 - score/100)
-    Umfang (2 * PI * 78) = 490.1
+    Formula for stroke-dashoffset: 490.1 * (1 - score/100)
+    Circumference (2 * PI * 78) = 490.1
 
-    Grade-Klassen: grade-a, grade-b-plus, grade-b, grade-c, grade-d
+    Grade classes: grade-a, grade-b-plus, grade-b, grade-c, grade-d
   -->
 
   <div class="meta">
-    <strong>Datum:</strong> <!-- AUDIT_DATE --><br>
+    <strong>Date:</strong> <!-- AUDIT_DATE --><br>
     <strong>Auditor:</strong> Claude Code (Automated Security Analysis)<br>
-    <strong>Methode:</strong> Statische Codeanalyse, Konfigurationspruefung, Dependency-Analyse<br>
+    <strong>Method:</strong> Static code analysis, configuration review, dependency analysis<br>
     <strong>Scope:</strong> <!-- AUDIT_SCOPE -->
   </div>
 </div>
@@ -492,42 +492,42 @@
 <div class="executive-summary">
   <!-- EXECUTIVE_SUMMARY -->
   <!--
-    Ersetze mit 3-5 Saetzen:
-    - Gesamteinschaetzung der Sicherheitslage
-    - Wichtigste Findings (kritisch/hoch)
-    - Empfehlung fuer naechste Schritte
+    Replace with 3-5 sentences:
+    - Overall security posture assessment
+    - Most important findings (critical/high)
+    - Recommendation for next steps
   -->
 </div>
 
 <!-- ============================================
      STATISTICS
      ============================================ -->
-<h2>Ergebnisuebersicht</h2>
+<h2>Results Overview</h2>
 
 <!-- STATS_GRID -->
 <!--
-  Ersetze mit:
+  Replace with:
 
   <div class="stats-grid">
     <div class="stat-card stat-critical">
       <div class="stat-count">N</div>
-      <div class="stat-label">Kritisch</div>
+      <div class="stat-label">Critical</div>
     </div>
     <div class="stat-card stat-high">
       <div class="stat-count">N</div>
-      <div class="stat-label">Hoch</div>
+      <div class="stat-label">High</div>
     </div>
     <div class="stat-card stat-medium">
       <div class="stat-count">N</div>
-      <div class="stat-label">Mittel</div>
+      <div class="stat-label">Medium</div>
     </div>
     <div class="stat-card stat-low">
       <div class="stat-count">N</div>
-      <div class="stat-label">Niedrig</div>
+      <div class="stat-label">Low</div>
     </div>
     <div class="stat-card stat-positive">
       <div class="stat-count">N</div>
-      <div class="stat-label">Positiv</div>
+      <div class="stat-label">Positive</div>
     </div>
   </div>
 -->
@@ -535,28 +535,28 @@
 <!-- ============================================
      FINDINGS TABLE
      ============================================ -->
-<h2>Findings-Uebersicht</h2>
+<h2>Findings Overview</h2>
 
 <!-- FINDINGS_TABLE -->
 <!--
-  Ersetze mit:
+  Replace with:
 
   <table>
     <thead>
       <tr>
         <th>ID</th>
-        <th>Schweregrad</th>
+        <th>Severity</th>
         <th>Finding</th>
-        <th>Datei</th>
+        <th>File</th>
         <th>OWASP</th>
         <th>CWE</th>
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td>K1</td>
-        <td><span class="badge badge-critical">Kritisch</span></td>
-        <td>Finding-Titel</td>
+        <td>C1</td>
+        <td><span class="badge badge-critical">Critical</span></td>
+        <td>Finding title</td>
         <td><code>src/file.ts</code></td>
         <td>A01:2021</td>
         <td>CWE-XXX</td>
@@ -571,26 +571,26 @@
      ============================================ -->
 <div class="page-break"></div>
 
-<h2>Detaillierte Findings</h2>
+<h2>Detailed Findings</h2>
 
 <!-- DETAILED_FINDINGS -->
 <!--
-  Pro Finding eine Karte erstellen:
+  Create one card per finding:
 
   <div class="finding-card no-break">
     <div class="finding-header">
-      <span class="finding-id">K1 – Finding-Titel</span>
-      <span class="badge badge-critical">Kritisch</span>
+      <span class="finding-id">C1 – Finding Title</span>
+      <span class="badge badge-critical">Critical</span>
     </div>
     <div class="finding-body">
-      <p><strong>Beschreibung:</strong> ...</p>
+      <p><strong>Description:</strong> ...</p>
 
-      <h4>Betroffener Code</h4>
-      <p class="text-small text-muted">Datei: <code>src/file.ts</code>, Zeilen XX-YY</p>
-      <pre><code>// aktueller Code</code></pre>
+      <h4>Affected Code</h4>
+      <p class="text-small text-muted">File: <code>src/file.ts</code>, Lines XX-YY</p>
+      <pre><code>// current code</code></pre>
 
-      <h4>Empfohlene Behebung</h4>
-      <pre><code>// empfohlener Code</code></pre>
+      <h4>Recommended Fix</h4>
+      <pre><code>// recommended code</code></pre>
 
       <div class="finding-meta">
         <span>OWASP: A01:2021 Broken Access Control</span>
@@ -605,14 +605,14 @@
      ============================================ -->
 <div class="page-break"></div>
 
-<h2>Positiv-Findings</h2>
+<h2>Positive Findings</h2>
 
 <!-- POSITIVE_FINDINGS -->
 <!--
-  Ersetze mit:
+  Replace with:
 
   <ul class="positive-list">
-    <li><strong>Titel:</strong> Beschreibung der positiven Massnahme</li>
+    <li><strong>Title:</strong> Description of the positive measure</li>
     ...
   </ul>
 -->
@@ -620,40 +620,40 @@
 <!-- ============================================
      RISK MATRIX
      ============================================ -->
-<h2>Risikomatrix</h2>
+<h2>Risk Matrix</h2>
 
 <!-- RISK_MATRIX -->
 <!--
-  Ersetze mit befuellter Matrix. Setze Finding-IDs in die passenden Zellen:
+  Replace with populated matrix. Place finding IDs in the appropriate cells:
 
   <div class="risk-matrix">
     <table>
       <thead>
         <tr>
           <th></th>
-          <th>Niedrig (Impact)</th>
-          <th>Mittel (Impact)</th>
-          <th>Hoch (Impact)</th>
-          <th>Kritisch (Impact)</th>
+          <th>Low (Impact)</th>
+          <th>Medium (Impact)</th>
+          <th>High (Impact)</th>
+          <th>Critical (Impact)</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="axis-label">Hoch (Wahrsch.)</td>
+          <td class="axis-label">High (Likelihood)</td>
           <td class="risk-cell-medium">...</td>
           <td class="risk-cell-high">...</td>
           <td class="risk-cell-critical">...</td>
           <td class="risk-cell-critical">...</td>
         </tr>
         <tr>
-          <td class="axis-label">Mittel (Wahrsch.)</td>
+          <td class="axis-label">Medium (Likelihood)</td>
           <td class="risk-cell-low">...</td>
           <td class="risk-cell-medium">...</td>
           <td class="risk-cell-high">...</td>
           <td class="risk-cell-critical">...</td>
         </tr>
         <tr>
-          <td class="axis-label">Niedrig (Wahrsch.)</td>
+          <td class="axis-label">Low (Likelihood)</td>
           <td class="risk-cell-low">...</td>
           <td class="risk-cell-low">...</td>
           <td class="risk-cell-medium">...</td>
@@ -669,11 +669,11 @@
      ============================================ -->
 <div class="page-break"></div>
 
-<h2>Quellen und Referenzen</h2>
+<h2>References</h2>
 
 <!-- REFERENCES -->
 <!--
-  Ersetze mit den relevanten Referenzen aus references.md:
+  Replace with the relevant references from references.md:
 
   <ul class="reference-list">
     <li>
@@ -688,9 +688,9 @@
      FOOTER
      ============================================ -->
 <div class="report-footer">
-  <p>Dieser Report wurde automatisiert erstellt mit Claude Code Security Audit Skill.</p>
-  <p>Die Analyse basiert auf statischer Codeanalyse und deckt moeglicherweise nicht alle Schwachstellen ab.</p>
-  <p>Eine manuelle Ueberpruefung durch einen Security-Experten wird empfohlen.</p>
+  <p>This report was generated automatically using the <a href="https://github.com/McGo/claude-code-security-audit">Claude Code Security Audit Skill</a>.</p>
+  <p>The analysis is based on static code analysis and may not cover all vulnerabilities.</p>
+  <p>A manual review by a security expert is recommended.</p>
 </div>
 
 </body>

@@ -6,204 +6,206 @@ disable-model-invocation: true
 
 # Security Audit Skill
 
-Du fuehrst einen vollstaendigen Security-Audit der aktuellen Codebase durch. Der Audit besteht aus drei Phasen: Analyse, Epic-Erstellung und PDF-Report-Generierung.
+You perform a comprehensive security audit of the current codebase. The audit consists of three phases: Analysis, Epic creation, and PDF report generation.
 
-**Scope:** `$ARGUMENTS` (default: `full` – alle Kategorien). Moegliche Einschraenkungen: `docker`, `api`, `auth`, `dependencies`, `config`, `network`.
+**Scope:** `$ARGUMENTS` (default: `full` – all categories). Possible restrictions: `docker`, `api`, `auth`, `dependencies`, `config`, `network`.
 
----
-
-## Phase 1 – Analyse
-
-Untersuche die Codebase systematisch in diesen Kategorien:
-
-### 1.1 Analyse-Kategorien
-
-| Kategorie | Was pruefen |
-|-----------|-------------|
-| **Source Code** | Injection-Schwachstellen (SQL, Command, SSRF, XSS), unsichere Deserialisierung, fehlende Input-Validierung, hartcodierte Secrets, unsichere Crypto |
-| **Authentifizierung & Autorisierung** | Token-Handling, Session-Management, fehlende Auth-Checks, Token-Leakage (Logs, Errors), Credential-Speicherung |
-| **Docker & Container** | Root-User, ueberfluessige Packages, fehlende Security-Optionen (read_only, no-new-privileges, cap_drop), Secret-Handling, Base-Image-Aktualitaet |
-| **CI/CD Pipeline** | Secret-Exposure in Logs, fehlende Image-Scans, unsichere Registry-Konfiguration, fehlende SAST/DAST |
-| **Dependencies** | Bekannte CVEs (pruefe package.json/requirements.txt/go.mod etc.), veraltete Packages, ueberfluessige Dependencies |
-| **Konfiguration** | Fehlende TLS-Erzwingung, offene CORS, fehlende Rate-Limits, unsichere Defaults, fehlende Security-Header |
-| **Netzwerk & Transport** | Cleartext-Uebertragung, fehlende Timeouts, unbegrenzte Body-Groessen, DNS-Rebinding |
-
-### 1.2 Vorgehen
-
-1. Lies `CLAUDE.md`, `README.md`, `package.json` (oder aequivalent) fuer Projektueberblick
-2. Durchsuche `src/` (oder Haupt-Sourceverzeichnis) rekursiv
-3. Pruefe `Dockerfile`, `docker-compose*.yml`, `.gitlab-ci.yml`, `.github/workflows/`
-4. Pruefe Konfigurationsdateien (`.env*`, `config.*`, etc.)
-5. Pruefe `package-lock.json`/`yarn.lock`/`go.sum` auf bekannte vulnerable Versionen
-
-### 1.3 Finding-Klassifikation
-
-Klassifiziere jedes Finding nach Schweregrad:
-
-| Schweregrad | Kriterien | Kuerzel |
-|-------------|-----------|---------|
-| **KRITISCH** | Direkt ausnutzbar, Remote Code Execution, Credential-Theft, vollstaendige Kompromittierung | K1, K2, ... |
-| **HOCH** | Ausnutzbar mit Vorbedingungen, signifikanter Impact, Datenverlust moeglich | H1, H2, ... |
-| **MITTEL** | Defense-in-Depth-Luecke, Best-Practice-Verstoss mit konkretem Risiko | M1, M2, ... |
-| **NIEDRIG** | Haertungsmassnahme, minimaler direkter Impact, Verbesserungsvorschlag | N1, N2, ... |
-
-Fuer jedes Finding dokumentiere:
-- **ID** und **Titel**
-- **Datei und Zeile** (soweit moeglich)
-- **Beschreibung** des Problems
-- **Aktueller Code** (relevanter Ausschnitt)
-- **Empfohlene Behebung** mit konkretem Code-Vorschlag
-- **OWASP Top 10** Zuordnung (falls zutreffend)
-- **CWE-Nummer** (konsultiere die references.md in diesem Skill-Verzeichnis)
-
-### 1.4 Positiv-Findings
-
-Dokumentiere auch, was gut umgesetzt ist. Beispiele:
-- Bereits vorhandene Input-Validierung
-- Korrekte Secret-Behandlung
-- Security-Header vorhanden
-- Dependency-Management auf aktuellem Stand
+**Language:** Parse `$ARGUMENTS` for a `lang=XX` parameter (e.g. `lang=de`, `lang=fr`). Default language is **English**. If a `lang` parameter is found, produce ALL output (epics, PDF report content, section headings, findings, summary) in the specified language. The `lang` parameter can be combined with a scope, e.g. `/security-audit docker lang=de`.
 
 ---
 
-## Phase 2 – Epics erstellen
+## Phase 1 – Analysis
 
-Erstelle in `docs/epics/` je ein Epic pro Schweregrad mit konkreten Tickets:
+Examine the codebase systematically across these categories:
 
-### 2.1 Epic-Struktur
+### 1.1 Analysis Categories
 
-Fuer jeden Schweregrad (bei dem Findings existieren) erstelle eine Datei:
+| Category | What to check |
+|----------|---------------|
+| **Source Code** | Injection vulnerabilities (SQL, Command, SSRF, XSS), insecure deserialization, missing input validation, hardcoded secrets, insecure crypto |
+| **Authentication & Authorization** | Token handling, session management, missing auth checks, token leakage (logs, errors), credential storage |
+| **Docker & Containers** | Root user, unnecessary packages, missing security options (read_only, no-new-privileges, cap_drop), secret handling, base image currency |
+| **CI/CD Pipeline** | Secret exposure in logs, missing image scans, insecure registry configuration, missing SAST/DAST |
+| **Dependencies** | Known CVEs (check package.json/requirements.txt/go.mod etc.), outdated packages, unnecessary dependencies |
+| **Configuration** | Missing TLS enforcement, open CORS, missing rate limits, insecure defaults, missing security headers |
+| **Network & Transport** | Cleartext transmission, missing timeouts, unlimited body sizes, DNS rebinding |
 
-- `docs/epics/epic-security-critical.md` – Kritische Findings
-- `docs/epics/epic-security-high.md` – Hohe Findings
-- `docs/epics/epic-security-medium.md` – Mittlere Findings
-- `docs/epics/epic-security-low.md` – Niedrige Findings
+### 1.2 Procedure
 
-### 2.2 Epic-Format
+1. Read `CLAUDE.md`, `README.md`, `package.json` (or equivalent) for project overview
+2. Search `src/` (or main source directory) recursively
+3. Check `Dockerfile`, `docker-compose*.yml`, `.gitlab-ci.yml`, `.github/workflows/`
+4. Check configuration files (`.env*`, `config.*`, etc.)
+5. Check `package-lock.json`/`yarn.lock`/`go.sum` for known vulnerable versions
+
+### 1.3 Finding Classification
+
+Classify each finding by severity:
+
+| Severity | Criteria | Prefix |
+|----------|----------|--------|
+| **CRITICAL** | Directly exploitable, Remote Code Execution, credential theft, full compromise | C1, C2, ... |
+| **HIGH** | Exploitable with preconditions, significant impact, data loss possible | H1, H2, ... |
+| **MEDIUM** | Defense-in-depth gap, best-practice violation with concrete risk | M1, M2, ... |
+| **LOW** | Hardening measure, minimal direct impact, improvement suggestion | L1, L2, ... |
+
+For each finding document:
+- **ID** and **title**
+- **File and line** (where possible)
+- **Description** of the problem
+- **Current code** (relevant excerpt)
+- **Recommended fix** with concrete code suggestion
+- **OWASP Top 10** mapping (if applicable)
+- **CWE number** (consult the references.md in this skill directory)
+
+### 1.4 Positive Findings
+
+Also document what is already well implemented. Examples:
+- Existing input validation
+- Correct secret handling
+- Security headers present
+- Dependency management up to date
+
+---
+
+## Phase 2 – Create Epics
+
+Create one epic per severity level with concrete tickets in `docs/epics/`:
+
+### 2.1 Epic Structure
+
+For each severity level (where findings exist) create a file:
+
+- `docs/epics/epic-security-critical.md` – Critical findings
+- `docs/epics/epic-security-high.md` – High findings
+- `docs/epics/epic-security-medium.md` – Medium findings
+- `docs/epics/epic-security-low.md` – Low findings
+
+### 2.2 Epic Format
 
 ```markdown
-# Epic: Security Hardening – [Schweregrad] Findings
+# Epic: Security Hardening – [Severity] Findings
 
 **Status:** open
 **Priority:** [CRITICAL/HIGH/MEDIUM/LOW]
-**Source:** Security Audit, [Datum]
+**Source:** Security Audit, [Date]
 
 ## Description
 
-[1-2 Saetze Zusammenfassung]
+[1-2 sentence summary]
 
 ---
 
 ## Tickets
 
-### [Epic-Nr].[Ticket-Nr] – [Titel]
+### [Epic-Nr].[Ticket-Nr] – [Title]
 
-**File:** `[Pfad]`
-**Finding:** [ID] – [Kurzbeschreibung]
+**File:** `[Path]`
+**Finding:** [ID] – [Short description]
 
-**Aktueller Code ([Datei]:[Zeilen]):**
-\`\`\`[sprache]
+**Current Code ([File]:[Lines]):**
+\`\`\`[language]
 [code]
 \`\`\`
 
-**Erforderliche Aenderungen:**
+**Required Changes:**
 
-1. [Konkrete Anweisung mit Code-Beispiel]
+1. [Concrete instruction with code example]
 2. [...]
 
 ---
 
 ## Acceptance Criteria
 
-- [ ] [Testbares Kriterium 1]
-- [ ] [Testbares Kriterium 2]
+- [ ] [Testable criterion 1]
+- [ ] [Testable criterion 2]
 ```
 
-### 2.3 Regeln fuer Epics
+### 2.3 Rules for Epics
 
-- Jedes Ticket muss **Datei und Zeile** referenzieren
-- Jedes Ticket muss **konkreten Fix-Code** enthalten (nicht nur "sollte gefixt werden")
-- Acceptance Criteria muessen **testbar** sein (z.B. "Request mit X gibt Y zurueck")
-- Wenn sich Fixes ueberschneiden, cross-referenziere die Tickets
-- Reihenfolge innerhalb eines Epics: nach Aufwand/Impact absteigend
+- Every ticket must reference **file and line**
+- Every ticket must contain **concrete fix code** (not just "should be fixed")
+- Acceptance criteria must be **testable** (e.g. "Request with X returns Y")
+- Cross-reference tickets when fixes overlap
+- Order within an epic: by effort/impact descending
 
 ---
 
-## Phase 3 – PDF-Report generieren
+## Phase 3 – Generate PDF Report
 
-Generiere einen professionellen Security-Audit-Report als PDF.
+Generate a professional security audit report as PDF.
 
-### 3.1 Vorgehen
+### 3.1 Procedure
 
-1. Lies das HTML-Template aus diesem Skill-Verzeichnis: `report-template.html`
-2. Lies die Referenzen aus diesem Skill-Verzeichnis: `references.md`
-3. Befuelle das Template mit den Audit-Ergebnissen (ersetze die Platzhalter-Kommentare)
-4. Erstelle das Ausgabeverzeichnis `docs/security-audit/` falls es nicht existiert
-5. Schreibe die befuellte HTML-Datei nach `docs/security-audit/[projektname]-security-audit-YYYY-MM-DD.html` (YYYY-MM-DD = aktuelles Datum)
-6. Konvertiere via Chrome headless zu PDF:
+1. Read the HTML template from this skill directory: `report-template.html`
+2. Read the references from this skill directory: `references.md`
+3. Populate the template with the audit results (replace the placeholder comments). Set the `<html lang="...">` attribute to the active language code (e.g. `en`, `de`, `fr`)
+4. Create the output directory `docs/security-audit/` if it does not exist
+5. Write the populated HTML file to `docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.html` (YYYY-MM-DD = current date)
+6. Convert via Chrome headless to PDF:
    ```bash
    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
      --headless --disable-gpu --no-sandbox \
-     --print-to-pdf="docs/security-audit/[projektname]-security-audit-YYYY-MM-DD.pdf" \
+     --print-to-pdf="docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf" \
      --print-to-pdf-no-header \
-     "docs/security-audit/[projektname]-security-audit-YYYY-MM-DD.html"
+     "docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.html"
    ```
-7. Loesche die temporaere HTML-Datei
+7. Delete the temporary HTML file
 
-### 3.2 Report-Inhalt
+### 3.2 Report Content
 
-Der Report muss enthalten:
+The report must contain:
 
-1. **Titelseite** – Projektname, Audit-Datum, Auditor (Claude Code), Gesamt-Rating
-2. **Executive Summary** – 3-5 Saetze Zusammenfassung fuer Management
-3. **Scoring** – Gesamt-Score als Rating (A/B+/B/C/D) basierend auf:
-   - A: Keine kritischen/hohen Findings, max 2 mittlere
-   - B+: Keine kritischen, max 2 hohe, wenige mittlere
-   - B: Keine kritischen, mehrere hohe
-   - C: 1-2 kritische oder viele hohe
-   - D: Mehrere kritische Findings
-4. **Findings-Tabelle** – Alle Findings mit ID, Schweregrad, Titel, OWASP/CWE
-5. **Detaillierte Findings** – Pro Finding: Beschreibung, betroffener Code, Empfehlung
-6. **Positiv-Findings** – Was bereits gut umgesetzt ist
-7. **Risikomatrix** – Wahrscheinlichkeit vs. Impact Grid
-8. **Quellen** – OWASP, CWE, NIST-Referenzen (aus references.md)
+1. **Title page** – Project name, audit date, auditor (Claude Code), overall rating
+2. **Executive Summary** – 3-5 sentence summary for management
+3. **Scoring** – Overall score as rating (A/B+/B/C/D) based on:
+   - A: No critical/high findings, max 2 medium
+   - B+: No critical, max 2 high, few medium
+   - B: No critical, several high
+   - C: 1-2 critical or many high
+   - D: Multiple critical findings
+4. **Findings table** – All findings with ID, severity, title, OWASP/CWE
+5. **Detailed findings** – Per finding: description, affected code, recommendation
+6. **Positive findings** – What is already well implemented
+7. **Risk matrix** – Likelihood vs. impact grid
+8. **References** – OWASP, CWE, NIST references (from references.md)
 
-### 3.3 Scoring-Ring
+### 3.3 Score Ring
 
-Berechne den Score als Prozentwert:
+Calculate the score as percentage:
 
 ```
-Score = 100 - (Kritisch * 20) - (Hoch * 10) - (Mittel * 4) - (Niedrig * 1)
+Score = 100 - (Critical * 20) - (High * 10) - (Medium * 4) - (Low * 1)
 Score = max(0, min(100, Score))
 ```
 
-Zuordnung:
-- 90-100: A (dunkelgruen)
-- 75-89: B+ (gruen)
-- 60-74: B (gelb)
+Mapping:
+- 90-100: A (dark green)
+- 75-89: B+ (green)
+- 60-74: B (yellow)
 - 40-59: C (orange)
-- 0-39: D (rot)
+- 0-39: D (red)
 
 ---
 
-## Ausgabe
+## Output
 
-Am Ende des Audits zeige eine Zusammenfassung:
+At the end of the audit show a summary:
 
 ```
-Security Audit abgeschlossen.
+Security Audit completed.
 
-Ergebnis: [Rating] ([Score]/100)
-- Kritisch: [n] Findings
-- Hoch: [n] Findings
-- Mittel: [n] Findings
-- Niedrig: [n] Findings
-- Positiv: [n] Findings
+Result: [Rating] ([Score]/100)
+- Critical: [n] findings
+- High: [n] findings
+- Medium: [n] findings
+- Low: [n] findings
+- Positive: [n] findings
 
-Erstellte Dateien:
-- docs/epics/epic-security-critical.md (falls Findings vorhanden)
-- docs/epics/epic-security-high.md (falls Findings vorhanden)
-- docs/epics/epic-security-medium.md (falls Findings vorhanden)
-- docs/epics/epic-security-low.md (falls Findings vorhanden)
-- docs/security-audit/[projektname]-security-audit-YYYY-MM-DD.pdf
+Generated files:
+- docs/epics/epic-security-critical.md (if findings exist)
+- docs/epics/epic-security-high.md (if findings exist)
+- docs/epics/epic-security-medium.md (if findings exist)
+- docs/epics/epic-security-low.md (if findings exist)
+- docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf
 ```
