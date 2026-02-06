@@ -82,6 +82,12 @@ Generates a professional PDF report containing:
 - Risk matrix (likelihood vs. impact)
 - References (OWASP, CWE, NIST)
 
+**File naming:**
+- First audit: `[projectname]-security-audit-YYYY-MM-DD.pdf`
+- Subsequent reviews: `[projectname]-security-review-YYYY-MM-DD-HHmmSS.pdf`
+
+This keeps the original audit as baseline and creates timestamped reviews alongside it for traceability.
+
 ## Scoring
 
 ```

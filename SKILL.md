@@ -141,8 +141,13 @@ Generate a professional security audit report as PDF.
 2. Read the references from this skill directory: `references.md`
 3. Populate the template with the audit results (replace the placeholder comments). Set the `<html lang="...">` attribute to the active language code (e.g. `en`, `de`, `fr`)
 4. Create the output directory `docs/security-audit/` if it does not exist
-5. Write the populated HTML file to `docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.html` (YYYY-MM-DD = current date)
-6. Detect the platform and resolve the Chrome binary path:
+5. Determine the output filename. Use the timestamp format `YYYY-MM-DD-HHmmSS` (current date and time):
+   - **First audit** (no existing PDF in `docs/security-audit/`): `[projectname]-security-audit-YYYY-MM-DD.pdf`
+   - **Subsequent reviews** (an audit PDF already exists): `[projectname]-security-review-YYYY-MM-DD-HHmmSS.pdf`
+
+   This keeps the original audit as baseline and creates timestamped reviews alongside it for traceability.
+6. Write the populated HTML file to `docs/security-audit/[filename].html`
+7. Detect the platform and resolve the Chrome binary path:
    - **macOS:** `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`
    - **Linux:** `google-chrome-stable` or `google-chrome` (whichever is found in PATH)
    - **Windows (WSL/Git Bash):** `"/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"` or `"C:\Program Files\Google\Chrome\Application\chrome.exe"`
@@ -153,11 +158,11 @@ Generate a professional security audit report as PDF.
    ```bash
    <resolved-chrome-path> \
      --headless --disable-gpu --no-sandbox \
-     --print-to-pdf="docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf" \
+     --print-to-pdf="docs/security-audit/[filename].pdf" \
      --print-to-pdf-no-header \
-     "docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.html"
+     "docs/security-audit/[filename].html"
    ```
-7. Delete the temporary HTML file
+8. Delete the temporary HTML file
 
 ### 3.2 Report Content
 
@@ -214,5 +219,6 @@ Generated files:
 - docs/epics/epic-security-high.md (if findings exist)
 - docs/epics/epic-security-medium.md (if findings exist)
 - docs/epics/epic-security-low.md (if findings exist)
-- docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf
+- docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf (first audit)
+- docs/security-audit/[projectname]-security-review-YYYY-MM-DD-HHmmSS.pdf (subsequent reviews)
 ```
