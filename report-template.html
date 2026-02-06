@@ -23,11 +23,14 @@
      ======================================== */
   @page {
     size: A4;
-    margin: 20mm 18mm 25mm 18mm;
+    margin: 20mm 18mm 0 18mm;
   }
 
   @media print {
-    body { font-size: 10pt; }
+    body {
+      font-size: 10pt;
+      padding-bottom: 25mm;
+    }
     .page-break { page-break-before: always; }
     .no-break { page-break-inside: avoid; }
     .title-page { page-break-after: always; }

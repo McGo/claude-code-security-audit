@@ -11,7 +11,23 @@ chmod +x install.sh
 ./install.sh
 ```
 
-This creates a symlink from `~/.claude/skills/security-audit` to the skill directory.
+### What `install.sh` does
+
+The script creates a single symlink: `~/.claude/skills/security-audit` → the cloned repo directory. That's it.
+
+Specifically, it:
+1. Creates `~/.claude/skills/` if it doesn't exist (`mkdir -p`)
+2. Creates (or updates) the symlink so Claude Code can discover the skill
+3. Refuses to overwrite anything that isn't already a symlink — if a regular file or directory exists at the target path, it exits with an error
+
+What it does **not** do:
+- Does **not** install any packages, binaries, or dependencies
+- Does **not** modify your shell profile, PATH, or environment variables
+- Does **not** download anything from the internet
+- Does **not** require or request elevated privileges (`sudo`)
+- Does **not** touch any files outside `~/.claude/skills/`
+
+You can review the script yourself — it's ~30 lines of bash.
 
 ## Usage
 
@@ -92,8 +108,10 @@ Score = 100 - (Critical * 20) - (High * 10) - (Medium * 4) - (Low * 1)
 
 ## Requirements
 
-- Claude Code CLI
-- Google Chrome (for headless PDF generation)
+- **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — the skill runs inside Claude Code
+- **Google Chrome** — used in headless mode to convert the HTML report to PDF. The skill auto-detects the Chrome path for macOS, Linux, and Windows (WSL/Git Bash). If Chrome is not found, PDF generation is skipped (epics and summary are still produced)
+- **git** — to clone this repository
+- **bash** — to run the install script
 
 ## License
 

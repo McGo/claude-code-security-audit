@@ -142,9 +142,16 @@ Generate a professional security audit report as PDF.
 3. Populate the template with the audit results (replace the placeholder comments). Set the `<html lang="...">` attribute to the active language code (e.g. `en`, `de`, `fr`)
 4. Create the output directory `docs/security-audit/` if it does not exist
 5. Write the populated HTML file to `docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.html` (YYYY-MM-DD = current date)
-6. Convert via Chrome headless to PDF:
+6. Detect the platform and resolve the Chrome binary path:
+   - **macOS:** `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"`
+   - **Linux:** `google-chrome-stable` or `google-chrome` (whichever is found in PATH)
+   - **Windows (WSL/Git Bash):** `"/mnt/c/Program Files/Google/Chrome/Application/chrome.exe"` or `"C:\Program Files\Google\Chrome\Application\chrome.exe"`
+
+   If Chrome is not found, inform the user and skip PDF generation (epics and summary are still produced).
+
+   Convert via Chrome headless to PDF:
    ```bash
-   "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" \
+   <resolved-chrome-path> \
      --headless --disable-gpu --no-sandbox \
      --print-to-pdf="docs/security-audit/[projectname]-security-audit-YYYY-MM-DD.pdf" \
      --print-to-pdf-no-header \
