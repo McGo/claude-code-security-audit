@@ -5,7 +5,8 @@ A global Claude Code skill that performs comprehensive security audits on any co
 ## Installation
 
 ```bash
-cd /path/to/security-audit
+git clone git@github.com:McGo/claude-code-security-audit.git
+cd claude-code-security-audit
 chmod +x install.sh
 ./install.sh
 ```
@@ -17,13 +18,15 @@ This creates a symlink from `~/.claude/skills/security-audit` to the skill direc
 In any project with Claude Code:
 
 ```
-/security-audit          # Full audit (all categories)
-/security-audit docker   # Docker & container security only
-/security-audit api      # API & network security only
-/security-audit auth     # Authentication & authorization only
-/security-audit dependencies  # Dependency analysis only
-/security-audit config   # Configuration review only
-/security-audit network  # Network & transport security only
+/security-audit                # Full audit (all categories, English)
+/security-audit docker         # Docker & container security only
+/security-audit api            # API & network security only
+/security-audit auth           # Authentication & authorization only
+/security-audit dependencies   # Dependency analysis only
+/security-audit config         # Configuration review only
+/security-audit network        # Network & transport security only
+/security-audit lang=de        # Full audit in German
+/security-audit docker lang=de # Category audit in German
 ```
 
 ## What It Does
