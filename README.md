@@ -119,6 +119,7 @@ This repository includes a self-audit as an example of what the skill produces:
 - **Initial Audit (Score 90):** [`docs/security-audit/security-audit-security-audit-2026-02-06.pdf`](docs/security-audit/security-audit-security-audit-2026-02-06.pdf)
 - **Follow-up Review (Score 92):** [`docs/security-audit/security-audit-security-review-2026-02-06-113004.pdf`](docs/security-audit/security-audit-security-review-2026-02-06-113004.pdf)
 - **Epics:** [`docs/epics/`](docs/epics/)
+- **Review commit diff:** [`1393e05`](https://github.com/McGo/claude-code-security-audit/commit/1393e05e439e9ec4a4c1f052447109001c034fab) — shows what changes a review produces (L2 fix, updated epics, new review PDF)
 
 ## Requirements
 
