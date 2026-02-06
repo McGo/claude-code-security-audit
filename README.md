@@ -116,7 +116,8 @@ Score = 100 - (Critical * 20) - (High * 10) - (Medium * 4) - (Low * 1)
 
 This repository includes a self-audit as an example of what the skill produces:
 
-- **PDF Report:** [`docs/security-audit/security-audit-security-audit-2026-02-06.pdf`](docs/security-audit/security-audit-security-audit-2026-02-06.pdf)
+- **Initial Audit (Score 90):** [`docs/security-audit/security-audit-security-audit-2026-02-06.pdf`](docs/security-audit/security-audit-security-audit-2026-02-06.pdf)
+- **Follow-up Review (Score 92):** [`docs/security-audit/security-audit-security-review-2026-02-06-113004.pdf`](docs/security-audit/security-audit-security-review-2026-02-06-113004.pdf)
 - **Epics:** [`docs/epics/`](docs/epics/)
 
 ## Requirements
