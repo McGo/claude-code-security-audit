@@ -106,6 +106,13 @@ Score = 100 - (Critical * 20) - (High * 10) - (Medium * 4) - (Low * 1)
 | `install.sh` | Symlink installer |
 | `README.md` | This file |
 
+## Example Output
+
+This repository includes a self-audit as an example of what the skill produces:
+
+- **PDF Report:** [`docs/security-audit/security-audit-security-audit-2026-02-06.pdf`](docs/security-audit/security-audit-security-audit-2026-02-06.pdf)
+- **Epics:** [`docs/epics/`](docs/epics/)
+
 ## Requirements
 
 - **[Claude Code](https://docs.anthropic.com/en/docs/claude-code)** — the skill runs inside Claude Code
